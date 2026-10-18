@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>口コミ返信ジェネレーター | スギザキスタジオ</title>
+<meta name="description" content="GoogleマップやSNSの口コミへの返信文を、評価と業種に合わせて自動作成。無料・登録不要。">
+<style>
+  :root{--ink:#1a1a1a;--sub:#666;--line:#e5e5e5;--accent:#2563eb;--bg:#fafafa}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;color:var(--ink);line-height:1.8;background:var(--bg)}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  header{padding:40px 0 16px}
+  .kicker{font-size:12px;color:var(--sub);letter-spacing:.1em}
+  h1{font-size:24px;margin:6px 0}
+  .desc{color:var(--sub);font-size:14px}
+  section{padding:24px 0}
+  label{display:block;font-size:14px;font-weight:600;margin:16px 0 6px}
+  select,input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:15px;background:#fff}
+  textarea{width:100%;min-height:90px;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:15px;font-family:inherit}
+  .btn{display:inline-block;margin-top:20px;padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer}
+  .btn:disabled{opacity:.5}
+  .out{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:16px;white-space:pre-wrap;font-size:14px;display:none}
+  .copy{margin-top:10px;font-size:13px;color:var(--accent);cursor:pointer;text-decoration:underline;background:none;border:none;padding:0}
+  .cta{margin-top:32px;padding:20px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .cta h2{font-size:16px;margin-bottom:8px}
+  .cta p{font-size:13px;color:var(--sub)}
+  .cta a{color:var(--accent)}
+  footer{padding:24px 0 40px;color:var(--sub);font-size:12px}
+  footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="kicker">FREE TOOL — スギザキスタジオ</p>
+    <h1>口コミ返信ジェネレーター</h1>
+    <p class="desc">Googleマップ・食べログ・SNSの口コミに返す文面を組み立てます。評価と業種を選んで、口コミを貼るだけ。</p>
+  </header>
+
+  <section>
+    <label for="rating">口コミの評価</label>
+    <select id="rating">
+      <option value="good">高評価（★4〜5）</option>
+      <option value="mid">中評価（★3）</option>
+      <option value="bad">低評価（★1〜2）</option>
+    </select>
+
+    <label for="biz">業種</label>
+    <select id="biz">
+      <option value="food">飲食店</option>
+      <option value="salon">美容院・サロン</option>
+      <option value="retail">小売・物販</option>
+      <option value="other">その他</option>
+    </select>
+
+    <label for="tone">返信のトーン</label>
+    <select id="tone">
+      <option value="formal">丁寧・フォーマル</option>
+      <option value="warm">親しみやすい</option>
+    </select>
+
+    <label for="shop">店名（任意）</label>
+    <input type="text" id="shop" placeholder="例：○○食堂">
+
+    <label for="review">口コミ本文（貼り付け）</label>
+    <textarea id="review" placeholder="口コミの内容をそのまま貼り付けてください"></textarea>
+
+    <button class="btn" id="gen">返信文を生成する</button>
+
+    <div class="out" id="out"></div>
+    <button class="copy" id="copy" style="display:none">この文章をコピー</button>
+  </section>
+
+  <section class="cta">
+    <h2>毎回考えるのが面倒な方へ</h2>
+    <p>スギザキスタジオでは、SNS投稿テンプレート30日分の販売や、台本・文章の制作代行をココナラで受け付けています。</p>
+    <p><a href="https://coconala.com/users/6356687">ココナラの商品一覧を見る →</a>　<a href="../index.html">トップページへ戻る</a></p>
+  </section>
+
+  <footer>
+    <p>生成文はあくまで下書きです。事実と異なる内容は必ず確認・修正してから投稿してください。</p>
+    <p>© <a href="../index.html">スギザキスタジオ</a></p>
+  </footer>
+</div>
+<script>
+const BIZ={
+  food:{open:"この度はご来店いただき",act:"またのご来店を心よりお待ちしております",bad:"味や提供の仕方について至らない点があり"},
+  salon:{open:"この度はご来店いただき",act:"またのご予約・ご来店を心よりお待ちしております",bad:"施術や接客について至らない点があり"},
+  retail:{open:"この度はお買い求めいただき",act:"またのご利用を心よりお待ちしております",bad:"商品や接客について至らない点があり"},
+  other:{open:"この度はご利用いただき",act:"またのご利用を心よりお待ちしております",bad:"サービスについて至らない点があり"}
+};
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+document.getElementById('gen').addEventListener('click',()=>{
+  const r=document.getElementById('rating').value;
+  const b=BIZ[document.getElementById('biz').value];
+  const formal=document.getElementById('tone').value==='formal';
+  const shop=document.getElementById('shop').value.trim();
+  const review=document.getElementById('review').value.trim();
+  const name=shop?shop:"当店";
+  let t="";
+  if(r==='good'){
+    t=pick([
+      `${b.open}、誠にありがとうございます。`,
+      `${b.open}、ありがとうございます。`
+    ]);
+    t+=`温かいお言葉をいただき、スタッフ一同大変励みになります。`;
+    if(review)t+=`「${review.slice(0,40)}${review.length>40?'…':''}」とのお声をいただき、今後もお客様に喜んでいただけるよう努めてまいります。`;
+    else t+=`今後もお客様に喜んでいただけるよう、精進してまいります。`;
+    t+=`${b.act}。`;
+    if(!formal)t+=`\n\nまた何かございましたら、お気軽にお声がけください。`;
+  }else if(r==='mid'){
+    t=`${b.open}、貴重なご意見をお寄せいただきありがとうございます。`;
+    t+=`いただいた内容を真摯に受け止め、スタッフ間で共有し改善に努めてまいります。`;
+    t+=`次回はよりご満足いただけるよう努めますので、${b.act}。`;
+  }else{
+    t=`この度は${b.bad}、誠に申し訳ございませんでした。`;
+    t+=`いただいたご指摘を真摯に受け止め、原因の確認と再発防止に取り組んでおります。`;
+    if(review)t+=`特に「${review.slice(0,40)}${review.length>40?'…':''}」の件につきましては、${name}として真摯に改善してまいります。`;
+    t+=`もしよろしければ、改めてご来店・ご利用の機会をいただけますと幸いです。今後ともよろしくお願いいたします。`;
+  }
+  const out=document.getElementById('out');
+  out.textContent=t;
+  out.style.display='block';
+  document.getElementById('copy').style.display='inline';
+});
+document.getElementById('copy').addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(document.getElementById('out').textContent);document.getElementById('copy').textContent='コピーしました';}
+  catch(e){document.getElementById('copy').textContent='コピー失敗—手動で選択してください';}
+});
+</script>
+</body>
+</html>
