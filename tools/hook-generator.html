@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ショート動画フック文ジェネレーター | スギザキスタジオ</title>
+<meta name="description" content="ショート動画の冒頭3秒のセリフを、ジャンルとテーマから自動生成。無料・登録不要。">
+<style>
+  :root{--ink:#1a1a1a;--sub:#666;--line:#e5e5e5;--accent:#2563eb;--bg:#fafafa}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;color:var(--ink);line-height:1.8;background:var(--bg)}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  header{padding:40px 0 16px}
+  .kicker{font-size:12px;color:var(--sub);letter-spacing:.1em}
+  h1{font-size:24px;margin:6px 0}
+  .desc{color:var(--sub);font-size:14px}
+  section{padding:24px 0}
+  label{display:block;font-size:14px;font-weight:600;margin:16px 0 6px}
+  select,input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:15px;background:#fff}
+  .btn{display:inline-block;margin-top:20px;padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer}
+  .hooks{margin-top:20px;display:none}
+  .hook{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:10px}
+  .hook .type{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.05em}
+  .hook .line{font-size:15px;margin-top:4px}
+  .hook .copy{float:right;font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline;background:none;border:none;padding:0}
+  .cta{margin-top:32px;padding:20px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .cta h2{font-size:16px;margin-bottom:8px}
+  .cta p{font-size:13px;color:var(--sub)}
+  .cta a{color:var(--accent)}
+  footer{padding:24px 0 40px;color:var(--sub);font-size:12px}
+  footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="kicker">FREE TOOL — スギザキスタジオ</p>
+    <h1>ショート動画フック文ジェネレーター</h1>
+    <p class="desc">ショート動画は冒頭3秒で離脱が決まります。ジャンルとテーマを入れると、6つの型でフック文を10本生成します。</p>
+  </header>
+
+  <section>
+    <label for="genre">動画のジャンル</label>
+    <select id="genre">
+      <option value="shop">店舗・商品紹介</option>
+      <option value="howto">ノウハウ・解説</option>
+      <option value="recruit">採用・会社紹介</option>
+      <option value="story">ストーリー・実録</option>
+      <option value="warning">注意喚起・失敗談</option>
+    </select>
+
+    <label for="theme">テーマ・商品名（例：新メニュー、転職のコツ、職場の雰囲気）</label>
+    <input type="text" id="theme" placeholder="例：日替わりランチ">
+
+    <button class="btn" id="gen">フック文を10本生成する</button>
+
+    <div class="hooks" id="hooks"></div>
+  </section>
+
+  <section class="cta">
+    <h2>台本ごと欲しい方へ</h2>
+    <p>フックだけでなく「フック→展開→オチ→CTA」まで完成した台本の量産を承っています。お試し10本¥2,000から。</p>
+    <p><a href="https://coconala.com/services/4454302">ショート動画台本お試し10本 →</a>　<a href="../index.html">トップページへ戻る</a></p>
+  </section>
+
+  <footer>
+    <p>生成文は下書きです。実際の動画内容と食い違わないよう調整して使ってください。</p>
+    <p>© <a href="../index.html">スギザキスタジオ</a></p>
+  </footer>
+</div>
+<script>
+const T={
+shop:[
+ ["疑問フック","{t}、まだ食べてない人います？"],
+ ["限定フック","{t}、今日の分はあと少しだけです"],
+ ["損失フック","{t}を知らずに帰るのはもったいない"],
+ ["比較フック","{t}と{t2}、どっちが人気か聞いてみた"],
+ ["数字フック","リピート率8割の{t}、理由を聞いた"],
+ ["意外フック","{t}、実は裏メニューの方が出ます"],
+],
+howto:[
+ ["断言フック","{t}、9割の人がやり方を間違えてます"],
+ ["疑問フック","{t}って本当に必要ですか？"],
+ ["数字フック","{t}を3ヶ月続けて分かったこと"],
+ ["損失フック","{t}を知らないと損します"],
+ ["逆説フック","{t}はやらない方がうまくいきます"],
+ ["結果フック","{t}だけで結果が変わりました"],
+],
+recruit:[
+ ["疑問フック","うちの会社、何が違うと思いますか？"],
+ ["意外フック","{t}、入社前と全然違いました"],
+ ["実録フック","{t}の1日、全部見せます"],
+ ["数字フック","離職率が低い会社の{t}の話"],
+ ["共感フック","就活で{t}が不安だった人へ"],
+ ["逆説フック","{t}がなくても働きやすい理由"],
+],
+story:[
+ ["実録フック","{t}で失敗した話、します"],
+ ["数字フック","{t}を1年続けた結果がこれです"],
+ ["疑問フック","なぜ私が{t}をやめたか"],
+ ["逆説フック","{t}は向いてない人の方が成功します"],
+ ["共感フック","{t}で悩んでる人、これ見て"],
+ ["告白フック","{t}、最初は嫌いでした"],
+],
+warning:[
+ ["警告フック","{t}で失敗する人の共通点、言います"],
+ ["損失フック","{t}、最初に知っておきたかった"],
+ ["数字フック","{t}で7割がやるミスがこれ"],
+ ["経験フック","{t}で痛い目にあった話"],
+ ["逆説フック","{t}を一生懸命やると逆にダメです"],
+ ["確認フック","{t}、始める前にこれだけ確認して"],
+]};
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+document.getElementById('gen').addEventListener('click',()=>{
+  const g=document.getElementById('genre').value;
+  const t=document.getElementById('theme').value.trim()||"このテーマ";
+  const list=T[g].map(([k,f])=>[k,f.replaceAll("{t}",t).replaceAll("{t2}","定番商品")]);
+  // 追加4本（型をランダム複製）
+  const extra=[];
+  while(extra.length<4){const e=pick(T[g]);const l=e[1].replaceAll("{t}",t).replaceAll("{t2}","定番商品");if(!list.some(x=>x[1]===l)&&!extra.some(x=>x[1]===l))extra.push([e[0],l]);}
+  const all=list.concat(extra).slice(0,10);
+  const box=document.getElementById('hooks');
+  box.innerHTML=all.map(([k,l],i)=>`<div class="hook"><span class="type">${i+1}. ${k}</span><button class="copy" data-t="${l.replaceAll('"','&quot;')}">コピー</button><p class="line">${l}</p></div>`).join('');
+  box.style.display='block';
+  box.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText(b.dataset.t);b.textContent='コピー済';}catch(e){b.textContent='失敗';}
+  }));
+});
+</script>
+</body>
+</html>
