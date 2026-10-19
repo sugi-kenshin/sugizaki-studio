@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ショート動画フック文ジェネレーター | スギザキスタジオ</title>
 <meta name="description" content="ショート動画の冒頭3秒のセリフを、ジャンルとテーマから自動生成。無料・登録不要。">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"ショート動画フック文ジェネレーター","url":"https://sugi-kenshin.github.io/sugizaki-studio/tools/hook-generator.html","description":"ショート動画の冒頭3秒のセリフを、ジャンルとテーマから自動生成。無料・登録不要。","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"author":{"@type":"Organization","name":"スギザキスタジオ","url":"https://sugi-kenshin.github.io/sugizaki-studio/"}}
+</script>
 <style>
   :root{--ink:#1a1a1a;--sub:#666;--line:#e5e5e5;--accent:#2563eb;--bg:#fafafa}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -52,6 +55,9 @@
     <label for="theme">テーマ・商品名（例：新メニュー、転職のコツ、職場の雰囲気）</label>
     <input type="text" id="theme" placeholder="例：日替わりランチ">
 
+    <label for="theme2">比較対象（任意・比較系フックに使います）</label>
+    <input type="text" id="theme2" placeholder="例：看板メニュー">
+
     <button class="btn" id="gen">フック文を10本生成する</button>
 
     <div class="hooks" id="hooks"></div>
@@ -60,7 +66,8 @@
   <section class="cta">
     <h2>台本ごと欲しい方へ</h2>
     <p>フックだけでなく「フック→展開→オチ→CTA」まで完成した台本の量産を承っています。お試し10本¥2,000から。</p>
-    <p><a href="https://coconala.com/services/4454302">ショート動画台本お試し10本 →</a>　<a href="../index.html">トップページへ戻る</a></p>
+    <p><a href="https://coconala.com/services/4454302">ショート動画台本お試し10本 →</a>　<a href="https://coconala.com/services/4453459">台本30本パック →</a></p>
+    <p>店舗運営の方はこちらも無料で使えます：<a href="kuchikomi-henshin.html">口コミ返信ジェネレーター →</a>　<a href="../index.html">トップページへ戻る</a></p>
   </section>
 
   <footer>
@@ -114,10 +121,12 @@ function pick(a){return a[Math.floor(Math.random()*a.length)]}
 document.getElementById('gen').addEventListener('click',()=>{
   const g=document.getElementById('genre').value;
   const t=document.getElementById('theme').value.trim()||"このテーマ";
-  const list=T[g].map(([k,f])=>[k,f.replaceAll("{t}",t).replaceAll("{t2}","定番商品")]);
+  const t2=document.getElementById('theme2').value.trim()||"定番の方";
+  const fill=f=>f.replaceAll("{t}",t).replaceAll("{t2}",t2);
+  const list=T[g].map(([k,f])=>[k,fill(f)]);
   // 追加4本（型をランダム複製）
   const extra=[];
-  while(extra.length<4){const e=pick(T[g]);const l=e[1].replaceAll("{t}",t).replaceAll("{t2}","定番商品");if(!list.some(x=>x[1]===l)&&!extra.some(x=>x[1]===l))extra.push([e[0],l]);}
+  while(extra.length<4){const e=pick(T[g]);const l=fill(e[1]);if(!list.some(x=>x[1]===l)&&!extra.some(x=>x[1]===l))extra.push([e[0],l]);}
   const all=list.concat(extra).slice(0,10);
   const box=document.getElementById('hooks');
   box.innerHTML=all.map(([k,l],i)=>`<div class="hook"><span class="type">${i+1}. ${k}</span><button class="copy" data-t="${l.replaceAll('"','&quot;')}">コピー</button><p class="line">${l}</p></div>`).join('');
